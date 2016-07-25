@@ -77,42 +77,33 @@ void init()
     io_init();
 
     /*
-    Set up Interrupt for trigger input 
+    Set up Interrupt for trigger input
 
-    PCINT0 to PCINT7 refer to the PCINT0 interrupt, PCINT8 to PCINT14 refer to the PCINT1 interrupt 
+    PCINT0 to PCINT7 refer to the PCINT0 interrupt, PCINT8 to PCINT14 refer to the PCINT1 interrupt
     and PCINT15 to PCINT23 refer to the PCINT2 interrupt
     -->
     TRIGGER_INPUT_PIN = PD7 = PCINT23 = pcint2 pin change interrupt for trigger
     */
-    //interrupt trigger	(pin change)
+    //interrupt trigger  (pin change)
 
     PCICR |= (1<<PCIE2);   //Enable PCINT2
     PCMSK2 |= (1<<PCINT23); //Trigger on change of PCINT23 (PD7)
-    
-       
+
+
     sei();
-}
-//-----------------------&= ------------------------------------
-void process()
-{
-	const uint8_t quantValue = quantizeValue(adc_read()+1);
-	//if the value changed
-	if(lastQuantValue != quantValue)
-	{
-		lastQuantValue = quantValue;
-		mcp4802_outputData(quantValue,0);
-		//start gate off timer
-		timer0_start();
-	}
 }
 //-----------------------------------------------------------
 ISR(PCINT2_vect)
 {
-    if(bit_is_clear(PIND,7)) //only rising edge
-    {
-	process();	
-    }	
-    return;	
+  if(bit_is_clear(PIND,7)) //only rising edge
+  {
+    const uint8_t quantValue = quantizeValue(adc_read()+1);
+    lastQuantValue = quantValue;
+    mcp4802_outputData(quantValue,0);
+    //start gate off timer
+    timer0_start();
+  }
+  return;
 };
 //-----------------------------------------------------------
 static uint8_t lastInput=0;
@@ -169,24 +160,32 @@ uint8_t quantizeValue(uint16_t input)
 //-----------------------------------------------------------
 int main(void)
 {
-    init();
-    
-    //read last button state from eeprom
-    io_setActiveSteps( eeprom_ReadBuffer());
-    
-    while(1)
-    {
-	//handle IOs (buttons + LED)		
-	io_processButtonsPipelined();
-	io_processLedPipelined();
+  init();
 
-	checkAutosave();
-	if( !GATE_IN_CONNECTED )
-	{
-	  //no gate cable plugged in
-	  //continuous mode
-	  process();
-	}	
+  //read last button state from eeprom
+  io_setActiveSteps( eeprom_ReadBuffer());
+
+  while(1)
+  {
+    //handle IOs (buttons + LED)
+    io_processButtonsPipelined();
+    io_processLedPipelined();
+
+    checkAutosave();
+    if( !GATE_IN_CONNECTED )
+    {
+      //no gate cable plugged in
+      //continuous mode
+      const uint8_t quantValue = quantizeValue(adc_read()+1);
+      //if the value changed
+      if(lastQuantValue != quantValue)
+      {
+        lastQuantValue = quantValue;
+        mcp4802_outputData(quantValue,0);
+        //start gate off timer
+        timer0_start();
+      }
     }
+  }
 }
 //-----------------------------------------------------------
