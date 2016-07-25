@@ -25,18 +25,18 @@
 
 #include "eeprom.h"
 
-#define EEPROM_DATASIZE 2		// 12 notes = 12 bit = 2 bytes
-#define EEPROM_SIZE 512 		// Atmega168 = 512 byte
+#define EEPROM_DATASIZE 2    // 12 notes = 12 bit = 2 bytes
+#define EEPROM_SIZE 512     // Atmega168 = 512 byte
 #define BUFFER_MASK 0x7f
 
-#define BUFFER_SIZE (EEPROM_SIZE/2/EEPROM_DATASIZE)	// Atmega168 = 128 bytes. 
-							// using 2 bytes for the 12 bit note value results in 128 * 100.000cycles 
-							// => 12.800.000 cycles
-							// thats about 35 years with 1000 saves per day
-							
+#define BUFFER_SIZE (EEPROM_SIZE/2/EEPROM_DATASIZE)  // Atmega168 = 128 bytes. 
+              // using 2 bytes for the 12 bit note value results in 128 * 100.000cycles 
+              // => 12.800.000 cycles
+              // thats about 35 years with 1000 saves per day
+              
 //-----------------------------------------------------------
-static uint16_t dataBuffer[BUFFER_SIZE] EEMEM;		// place to store the note data -> 2x128 = 256 bytes
-static uint8_t statusBuffer[BUFFER_SIZE] EEMEM;		// place to keep the status info (next write position) -> 128 bytes
+static uint16_t dataBuffer[BUFFER_SIZE] EEMEM;    // place to store the note data -> 2x128 = 256 bytes
+static uint8_t statusBuffer[BUFFER_SIZE] EEMEM;    // place to keep the status info (next write position) -> 128 bytes
 static uint8_t currentEepromAddress = 0;
 
 //-----------------------------------------------------------

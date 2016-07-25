@@ -1,9 +1,9 @@
 /*
  * adc.c
- * 
+ *
  *  Copyright 2015 Julian Schmidt, Sonic Potions <julian@sonic-potions.com>
  *  Web: www.sonic-potions.com/penrose
- * 
+ *
  *  This file is part of the Penrose Quantizer Firmware.
  *
  *  The Penrose Quantizer Firmware is free software: you can redistribute it and/or modify
@@ -18,41 +18,41 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with the Penrose Quantizer Firmware.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 #include "adc.h"
-#include <avr/interrupt.h>  
+#include <avr/interrupt.h>
 
 //-----------------------------------------------------------
 void adc_init(void)
 {
-	DDRC &= ~(1<<PC0); //pin input
-	PORTC &= ~(1<<PC0); //no pullup
+  DDRC &= ~(1<<PC0); //pin input
+  PORTC &= ~(1<<PC0); //no pullup
 
- 	// AVCC as ref voltage
-	ADMUX =  (1<<REFS0);
-	ADMUX = (ADMUX & ~(0x1F)) | (0 & 0x1F); //always channel 0
- 	// single conversion
-	ADCSRA = (1<<ADPS2) |(1<<ADPS1)| (1<<ADPS0);     // adc prescaler (must be between 50 and 200kHz)
-	ADCSRA |= (1<<ADEN);                  // ADC enable
- 	// dummy readout
-	ADCSRA |= (1<<ADSC);                  // single readout
-	while (ADCSRA & (1<<ADSC) ) {}        // wait to finish
+   // AVCC as ref voltage
+  ADMUX =  (1<<REFS0);
+  ADMUX = (ADMUX & ~(0x1F)) | (0 & 0x1F); //always channel 0
+   // single conversion
+  ADCSRA = (1<<ADPS2) |(1<<ADPS1)| (1<<ADPS0);     // adc prescaler (must be between 50 and 200kHz)
+  ADCSRA |= (1<<ADEN);                  // ADC enable
+   // dummy readout
+  ADCSRA |= (1<<ADSC);                  // single readout
+  while (ADCSRA & (1<<ADSC) ) {}        // wait to finish
 };
 //-----------------------------------------------------------
 uint16_t adc_read()
 {
-	ADCSRA |= (1<<ADSC);            // single readout
-	while (ADCSRA & (1<<ADSC) ) {}  // wait to finish
-	return ADCW;
+  ADCSRA |= (1<<ADSC);            // single readout
+  while (ADCSRA & (1<<ADSC) ) {}  // wait to finish
+  return ADCW;
 };
 //-----------------------------------------------------------
 uint16_t adc_readAvg( uint8_t channel, uint8_t nsamples )
 {
-	uint32_t sum = 0;
-	for (uint8_t i = 0; i < nsamples; ++i ) {
-	sum += adc_read( channel );
-	}
-  	return (uint16_t)( sum / nsamples );
+  uint32_t sum = 0;
+  for (uint8_t i = 0; i < nsamples; ++i ) {
+  sum += adc_read( channel );
+  }
+    return (uint16_t)( sum / nsamples );
 };
 //-----------------------------------------------------------
