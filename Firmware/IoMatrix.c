@@ -58,7 +58,7 @@ static const uint8_t ledPinArray[12][2] PROGMEM = {
 };
 //-----------------------------------------------------------
 static uint16_t io_ledState=0xfff;		//state of the 12 LEDs == activated notes
-static uint8_t io_activeStep=2;			//current active quantisation step == currently played note
+static uint8_t io_activeStep=99;			//current active quantisation step == currently played note
 static uint16_t io_lastButtonState=0x00;
 //-----------------------------------------------------------
 void io_init()
