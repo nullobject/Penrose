@@ -47,11 +47,11 @@ uint16_t adc_read()
   return ADCW;
 };
 //-----------------------------------------------------------
-uint16_t adc_readAvg( uint8_t channel, uint8_t nsamples )
+uint16_t adc_readAvg(uint8_t nsamples)
 {
   uint32_t sum = 0;
-  for (uint8_t i = 0; i < nsamples; ++i ) {
-  sum += adc_read( channel );
+  for (uint8_t i = 0; i < nsamples; ++i) {
+  sum += adc_read();
   }
     return (uint16_t)( sum / nsamples );
 };

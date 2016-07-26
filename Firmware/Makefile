@@ -50,9 +50,9 @@ AS  =$(addprefix $(BINPATH),avr-as)
 ###############################################################################
 # SOURCE FILES
 SRCDIR=.
-CCSRCFILES  = $(shell find $(SRCDIR) -type f -name "*.c" | grep -v '/\.')
+CCSRCFILES  = $(shell find $(SRCDIR) -type f -name "*.cc" | grep -v '/\.')
 
-vpath %.c ./
+vpath %.cc ./
 
 ###############################################################################
 # SETUP
@@ -62,18 +62,15 @@ OBJDIR=./build/
 ELF=$(OBJDIR)quantizer.elf
 
 # Build object files from source...
-OBJFILES = $(addprefix $(OBJDIR),$(notdir $(CCSRCFILES:.c=.o)))
+OBJFILES = $(addprefix $(OBJDIR),$(notdir $(CCSRCFILES:.cc=.o)))
 
 # Project defines
 DEFINES += -DF_CPU=20000000UL -D__PROG_TYPES_COMPAT__
 
 CFLAGS += $(DEFINES) $(INCLUDES)
 CFLAGS += -O$(AVR_OPTIMIZE)
-CFLAGS += -Wall -Wextra -c -funsigned-char -funsigned-bitfields -ffast-math -freciprocal-math -ffunction-sections -fdata-sections -fpack-struct -fshort-enums
-ifeq ($(PEDANTIC),1)
-CFLAGS += -Werror
-endif
-CFLAGS += -mmcu=atmega168 -std=gnu99 -MD -MP
+CFLAGS += -Wall -Werror -Wextra -c -funsigned-char -funsigned-bitfields -ffast-math -freciprocal-math -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -fno-exceptions
+CFLAGS += -mmcu=atmega168 -MD -MP
 LDFLAGS += -Wl,-Map=$(MAP) -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,-gc-sections -mmcu=atmega168
 
 ###############################################################################
@@ -88,7 +85,7 @@ all:
 	@echo " clean : clean build directory"
 	@echo " printenv : print some debug variables"
 	@echo " printfiles : print list of files that would be compiled"
-	
+
 
 .PHONY: clean
 clean:
@@ -143,9 +140,9 @@ penrose.wav: $(BINARY)
 $(OBJDIR):
 	@mkdir -p $(OBJDIR)
 
-$(OBJDIR)%.o: %.c
+$(OBJDIR)%.o: %.cc
 	$(ECHO) "Compiling $<..."
-	$(AT)$(CC) $(CFLAGS) $< -o $@
+	$(AT)$(CXX) $(CFLAGS) $< -o $@
 
 $(OBJDIR)%.o: %.S
 	$(ECHO) "Assembling $<..."
