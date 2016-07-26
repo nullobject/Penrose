@@ -65,11 +65,11 @@ ELF=$(OBJDIR)quantizer.elf
 OBJFILES = $(addprefix $(OBJDIR),$(notdir $(CCSRCFILES:.cc=.o)))
 
 # Project defines
-DEFINES += -DF_CPU=20000000UL -D__PROG_TYPES_COMPAT__
+DEFINES += -DF_CPU=20000000UL -D__PROG_TYPES_COMPAT__ -DATMEGA168P
 
 CFLAGS += $(DEFINES) $(INCLUDES)
-CFLAGS += -O$(AVR_OPTIMIZE)
-CFLAGS += -Wall -Werror -Wextra -c -funsigned-char -funsigned-bitfields -ffast-math -freciprocal-math -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -fno-exceptions
+CFLAGS += -O$(AVR_OPTIMIZE) -I.
+CFLAGS += -Wall -w -c -funsigned-char -funsigned-bitfields -ffast-math -freciprocal-math -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -fno-exceptions
 CFLAGS += -mmcu=atmega168 -MD -MP
 LDFLAGS += -Wl,-Map=$(MAP) -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,-gc-sections -mmcu=atmega168
 
