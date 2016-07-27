@@ -74,6 +74,7 @@ void init() {
   mcp4802_init();
   adc_init();
   ui.init();
+  ui.setActiveButton(1);
 
   /*
     Set up Interrupt for trigger input
@@ -103,10 +104,10 @@ ISR(PCINT2_vect) {
 }
 
 uint8_t quantizeValue(uint16_t input) {
-  if (!ui.hasSelectedButtons()) { // no stepselected
+  // if (!ui.hasSelectedButtons()) { // no stepselected
     // io_setCurrentQuantizedValue(99); // no active step LED
-    return 0;
-  }
+    // return 0;
+  // }
 
   if (abs(input - lastInput) >= 2) {
     lastInput = input;

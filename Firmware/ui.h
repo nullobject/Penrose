@@ -19,7 +19,7 @@ public:
   bool hasSelectedButtons();
 
 private:
-  bool ledState[kNumButtons];
+  uint16_t ledState;
   bool buttonState[kNumButtons];
   uint16_t pressTime[kNumButtons];
   uint8_t activeButton;
