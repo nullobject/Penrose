@@ -66,7 +66,7 @@ void Ui::setColumn(uint8_t n) {
   }
 }
 
-uint8_t Ui::getRow(uint8_t n) {
+bool Ui::getRow(uint8_t n) {
   if (n == 0) {
     return !row_1.value();
   } else if (n == 1) {
@@ -81,7 +81,7 @@ void Ui::pollButton(uint8_t n) {
   uint8_t col = n % 4;
 
   setColumn(col);
-  ButtonState value = (ButtonState)getRow(row);
+  bool value = getRow(row);
 
   if (value && buttonState[n] != value) {
     toggleButton(n);
@@ -95,11 +95,7 @@ void Ui::toggleButton(uint8_t n) {
     activeButton = 0xff;
   }
 
-  if (ledState[n] == LED_STATE_OFF) {
-    ledState[n] = LED_STATE_GREEN;
-  } else {
-    ledState[n] = LED_STATE_OFF;
-  }
+  ledState[n] = !ledState[n];
 
   // if (!(ledState & (1 << n))) {
   //   ledState |= 1 << n;
@@ -131,12 +127,14 @@ void Ui::refreshLed(uint8_t n) {
   uint8_t pinA = charlieplex[n][0];
   uint8_t pinB = charlieplex[n][1];
 
-  if (n == activeButton) {
-    setLedPin(pinA, 1);
-    setLedPin(pinB, 0);
-  } else if (ledState[n] == LED_STATE_GREEN) {
-    setLedPin(pinA, 0);
-    setLedPin(pinB, 1);
+  if (ledState[n]) {
+    if (n == activeButton) {
+      setLedPin(pinA, 1);
+      setLedPin(pinB, 0);
+    } else {
+      setLedPin(pinA, 0);
+      setLedPin(pinB, 1);
+    }
   }
 }
 

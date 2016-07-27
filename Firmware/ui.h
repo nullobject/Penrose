@@ -5,9 +5,6 @@
 
 using namespace avrlib;
 
-enum LedState {LED_STATE_OFF, LED_STATE_RED, LED_STATE_GREEN};
-enum ButtonState {BUTTON_STATE_OFF, BUTTON_STATE_ON};
-
 const uint8_t kNumButtons = 12;
 
 class Ui {
@@ -22,8 +19,8 @@ public:
   bool hasSelectedButtons();
 
 private:
-  LedState ledState[kNumButtons];
-  ButtonState buttonState[kNumButtons];
+  bool ledState[kNumButtons];
+  bool buttonState[kNumButtons];
   uint16_t pressTime[kNumButtons];
   uint8_t activeButton;
 
@@ -49,7 +46,7 @@ private:
   void refreshLed(uint8_t n);
   void setLedPin(uint8_t n, uint8_t value);
   void setColumn(uint8_t n);
-  uint8_t getRow(uint8_t n);
+  bool getRow(uint8_t n);
 };
 
 #endif
