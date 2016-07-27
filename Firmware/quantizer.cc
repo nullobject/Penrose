@@ -103,7 +103,7 @@ ISR(PCINT2_vect) {
 }
 
 uint8_t quantizeValue(uint16_t input) {
-  if (!ui.hasSelectedNotes()) { // no stepselected
+  if (!ui.hasSelectedButtons()) { // no stepselected
     // io_setCurrentQuantizedValue(99); // no active step LED
     return 0;
   }
@@ -131,7 +131,7 @@ uint8_t quantizeValue(uint16_t input) {
   // search for the lowest matching activated note (lit led)
   int i = 0;
   for (; i < 13; i++) {
-    if (ui.noteSelected((note + i) % 12)) break;
+    if (ui.buttonSelected((note + i) % 12)) break;
   }
 
   note = note + i;
@@ -143,7 +143,7 @@ uint8_t quantizeValue(uint16_t input) {
   quantValue = (octave * 12) + note;
 
   // store to matrix
-  ui.setActiveNote(note);
+  ui.setActiveButton(note);
 
   return quantValue * 2;
 }

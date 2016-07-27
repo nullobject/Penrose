@@ -10,6 +10,8 @@ static const uint8_t charlieplex[][2] = {
 };
 
 void Ui::init() {
+  activeButton = 0xff;
+
   col_1.set_mode(DIGITAL_OUTPUT);
   col_2.set_mode(DIGITAL_OUTPUT);
   col_3.set_mode(DIGITAL_OUTPUT);
@@ -82,18 +84,28 @@ void Ui::pollButton(uint8_t n) {
   ButtonState value = (ButtonState)getRow(row);
 
   if (value && buttonState[n] != value) {
-    toggleLed(n);
+    toggleButton(n);
   }
 
   buttonState[n] = value;
 }
 
-void Ui::toggleLed(uint8_t n) {
+void Ui::toggleButton(uint8_t n) {
+  if (n == activeButton) {
+    activeButton = 0xff;
+  }
+
   if (ledState[n] == LED_STATE_OFF) {
     ledState[n] = LED_STATE_GREEN;
   } else {
     ledState[n] = LED_STATE_OFF;
   }
+
+  // if (!(ledState & (1 << n))) {
+  //   ledState |= 1 << n;
+  // } else {
+  //   ledState &= ~(1 << n);
+  // }
 }
 
 void Ui::turnLedsOff() {
@@ -119,7 +131,7 @@ void Ui::refreshLed(uint8_t n) {
   uint8_t pinA = charlieplex[n][0];
   uint8_t pinB = charlieplex[n][1];
 
-  if (ledState[n] == LED_STATE_RED) {
+  if (n == activeButton) {
     setLedPin(pinA, 1);
     setLedPin(pinB, 0);
   } else if (ledState[n] == LED_STATE_GREEN) {
@@ -150,13 +162,14 @@ void Ui::setLedPin(uint8_t n, uint8_t value) {
   }
 }
 
-void Ui::setActiveNote(uint8_t n) {
+void Ui::setActiveButton(uint8_t n) {
+  activeButton = n;
 }
 
-bool Ui::noteSelected(uint8_t n) {
+bool Ui::buttonSelected(uint8_t n) {
   return false;
 }
 
-bool Ui::hasSelectedNotes() {
+bool Ui::hasSelectedButtons() {
   return false;
 }

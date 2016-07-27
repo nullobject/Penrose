@@ -17,14 +17,15 @@ public:
 
   void init();
   void poll();
-  void setActiveNote(uint8_t n);
-  bool noteSelected(uint8_t n);
-  bool hasSelectedNotes();
+  void setActiveButton(uint8_t n);
+  bool buttonSelected(uint8_t n);
+  bool hasSelectedButtons();
 
 private:
-  ButtonState buttonState[kNumButtons];
   LedState ledState[kNumButtons];
+  ButtonState buttonState[kNumButtons];
   uint16_t pressTime[kNumButtons];
+  uint8_t activeButton;
 
   Gpio<PortD, 0> col_1;
   Gpio<PortD, 1> col_2;
@@ -43,7 +44,7 @@ private:
   Gpio<PortD, 6> led_6;
 
   void pollButton(uint8_t n);
-  void toggleLed(uint8_t n);
+  void toggleButton(uint8_t n);
   void turnLedsOff();
   void refreshLed(uint8_t n);
   void setLedPin(uint8_t n, uint8_t value);
