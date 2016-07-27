@@ -188,17 +188,20 @@ void io_processLedPipelined()
 {
   turnAllLedsOff();
 
-  if(ledState==io_activeStep)
+  if ( (io_ledState & (1<<ledState)) > 0)
   {
-    //this step is currently played => set color 1
-    turnLedOn(ledState,0);
-  } 
-  else if ( (io_ledState & (1<<ledState)) > 0)
-  {
-    //step is active => colour 2
-    turnLedOn(ledState,1);
+    if(ledState==io_activeStep)
+    {
+      //this step is currently played => set color 1
+      turnLedOn(ledState,0);
+    }
+    else
+    {
+      //step is active => colour 2
+      turnLedOn(ledState,1);
+    }
   }
-  
+
   ledState++;
   if(ledState>=12) ledState=0;
 };
