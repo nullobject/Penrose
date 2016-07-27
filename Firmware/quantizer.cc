@@ -30,6 +30,7 @@
 #include "adc.h"
 #include "eeprom.h"
 #include "timebase.h"
+#include "ui.h"
 
 #define TRIGGER_INPUT_PIN     PD7
 #define TRIGGER_INPUT_IN_PORT PIND
@@ -49,6 +50,8 @@
 #define ADC_STEPS_PER_NOTE (VOLT_PER_NOTE / VOLT_PER_ADC_STEP) // ~8.53
 
 #define GATE_IN_CONNECTED ((SWITCH_IN_PORT & (1 << SWITCH_PIN)) == 0)
+
+Ui ui;
 
 uint8_t quantizeValue(uint16_t input);
 
@@ -72,6 +75,7 @@ void init() {
   mcp4802_init();
   adc_init();
   io_init();
+  ui.init();
 
   /*
     Set up Interrupt for trigger input
@@ -153,9 +157,10 @@ int main(void) {
 
   while (1) {
     // handle IOs (buttons + LED)
-    io_processButtonsPipelined();
-    io_processLedPipelined();
+    // io_processButtonsPipelined();
+    // io_processLedPipelined();
 
+    ui.poll();
     checkAutosave();
 
     // no gate cable plugged in continuous mode
