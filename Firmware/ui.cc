@@ -30,11 +30,13 @@ void Ui::init() {
 }
 
 void Ui::poll() {
-  pollButton(currentButton);
-  refreshLed(currentButton);
+  static uint8_t button = 0;
 
-  if (++currentButton >= kNumButtons) {
-    currentButton = 0;
+  pollButton(button);
+  refreshLed(button);
+
+  if (++button >= kNumButtons) {
+    button = 0;
   }
 }
 
@@ -77,17 +79,21 @@ void Ui::pollButton(uint8_t n) {
   uint8_t col = n % 4;
 
   setColumn(col);
-  bool value = getRow(row);
+  ButtonState value = (ButtonState)getRow(row);
 
   if (value && buttonState[n] != value) {
-    if (ledState[n] == LED_STATE_OFF) {
-      ledState[n] = LED_STATE_GREEN;
-    } else {
-      ledState[n] = LED_STATE_OFF;
-    }
+    toggleLed(n);
   }
 
   buttonState[n] = value;
+}
+
+void Ui::toggleLed(uint8_t n) {
+  if (ledState[n] == LED_STATE_OFF) {
+    ledState[n] = LED_STATE_GREEN;
+  } else {
+    ledState[n] = LED_STATE_OFF;
+  }
 }
 
 void Ui::turnLedsOff() {
@@ -144,6 +150,13 @@ void Ui::setLedPin(uint8_t n, uint8_t value) {
   }
 }
 
-void Ui::setLedState(uint8_t n, LedState state) {
-  ledState[n] = state;
+void Ui::setActiveNote(uint8_t n) {
+}
+
+bool Ui::noteSelected(uint8_t n) {
+  return false;
+}
+
+bool Ui::hasSelectedNotes() {
+  return false;
 }

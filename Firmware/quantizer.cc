@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <util/delay.h>
 
-#include "IoMatrix.h"
 #include "MCP4802.h"
 #include "adc.h"
 #include "eeprom.h"
@@ -74,7 +73,6 @@ void init() {
   timer_init();
   mcp4802_init();
   adc_init();
-  io_init();
   ui.init();
 
   /*
@@ -105,8 +103,8 @@ ISR(PCINT2_vect) {
 }
 
 uint8_t quantizeValue(uint16_t input) {
-  if (io_getActiveSteps() == 0) { // no stepselected
-    io_setCurrentQuantizedValue(99); // no active step LED
+  if (!ui.hasSelectedNotes()) { // no stepselected
+    // io_setCurrentQuantizedValue(99); // no active step LED
     return 0;
   }
 
@@ -133,7 +131,7 @@ uint8_t quantizeValue(uint16_t input) {
   // search for the lowest matching activated note (lit led)
   int i = 0;
   for (; i < 13; i++) {
-    if (((1 << ((note + i) % 12)) & io_getActiveSteps()) != 0) break;
+    if (ui.noteSelected((note + i) % 12)) break;
   }
 
   note = note + i;
@@ -145,7 +143,8 @@ uint8_t quantizeValue(uint16_t input) {
   quantValue = (octave * 12) + note;
 
   // store to matrix
-  io_setCurrentQuantizedValue(note);
+  ui.setActiveNote(note);
+
   return quantValue * 2;
 }
 
@@ -153,14 +152,11 @@ int main(void) {
   init();
 
   // read last button state from eeprom
-  io_setActiveSteps(eeprom_ReadBuffer());
+  // io_setActiveSteps(eeprom_ReadBuffer());
 
   while (1) {
-    // handle IOs (buttons + LED)
-    // io_processButtonsPipelined();
-    // io_processLedPipelined();
-
     ui.poll();
+
     checkAutosave();
 
     // no gate cable plugged in continuous mode
