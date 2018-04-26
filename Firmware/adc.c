@@ -28,8 +28,7 @@ void adc_init(void)
 {
 	DDRC &= ~(1<<PC0); //pin input
 	PORTC &= ~(1<<PC0); //no pullup
-  
-	uint16_t result;
+
  	// AVCC as ref voltage
 	ADMUX =  (1<<REFS0);
 	ADMUX = (ADMUX & ~(0x1F)) | (0 & 0x1F); //always channel 0
@@ -39,8 +38,6 @@ void adc_init(void)
  	// dummy readout
 	ADCSRA |= (1<<ADSC);                  // single readout
 	while (ADCSRA & (1<<ADSC) ) {}        // wait to finish
-	// read result 
-	result = ADCW;
 };
 //-----------------------------------------------------------
 uint16_t adc_read()
